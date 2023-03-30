@@ -1,12 +1,14 @@
 <template>
-    <div class="flex">
+    <div class="flex relative  scrollHight" ref="scrollContainer" @scroll="handleScroll">
         <!-- 左边栏 -->
-        <div class="w-44 p-2 bg-white mr-4" style="height: 490px;">
-            <div v-for="(item, index) in leftNav" :key="index"
-                class="p-3 flex items-center text-gray-400 cursor-pointer left-nav"
-                :class="navIndex === index ? 'left-nav-active' : ''" @click="selectLeftNav(index)">
-                <img :src="item.img" class="w-4 h-4 mr-3" />
-                <span>{{ item.text }}</span>
+        <div class="w-44 mr-4  relative">
+            <div class=" fixed p-2 bg-white w-44 " style="height: 490px;">
+                <div v-for="(item, index) in leftNav" :key="index"
+                    class="p-3 flex items-center text-gray-400 cursor-pointer left-nav"
+                    :class="navIndex === index ? 'left-nav-active' : ''" @click="selectLeftNav(index)">
+                    <img :src="item.img" class="w-4 h-4 mr-3" />
+                    <span>{{ item.text }}</span>
+                </div>
             </div>
         </div>
         <!--中间内容  -->
@@ -67,8 +69,8 @@
                                         }}</span>
                                     </div>
                                     <div class="flex items-center mr-4" @click.stop="addLike(item.id, item.like, index)">
-                                        <img v-if="item.like.includes(userInfo.id)" src="../../assets/pc/like-active.png"
-                                            class="w-4 h-4" />
+                                        <img v-if="userInfo && item.like.includes(userInfo.id)"
+                                            src="../../assets/pc/like-active.png" class="w-4 h-4" />
                                         <img v-else src="../../assets/pc/like.png" class="w-4 h-4" />
                                         <span style="font-size: 13px;color: gray;margin-left: 3px;">{{ item.like.length
                                         }}</span>
@@ -261,6 +263,7 @@ const bottomLabel = [
 ]
 const userInfo = ref()
 const navIndex = ref(1)
+const pageNum = ref(1)
 const selectNav = (index: number) => {
     selectIndex.value = index
 }
@@ -276,11 +279,26 @@ type articleData = {
     collect: number[]
 }[]
 const article = ref<articleData>([])
+const scrollContainer = ref()
+const handleScroll = () => {
+    const scrollContent = scrollContainer.value
+    if (scrollContent.scrollTop + scrollContent.clientHeight >= scrollContent.scrollHeight - 1) {
+        console.log('需要加载数据了')
+        pageNum.value += 1
+        getArticle()
+    }
+    // console.log("scrollTop", scrollContent.scrollTop)
+    // console.log("clientHeight", scrollContent.clientHeight)
+    // console.log("scrollHeight", scrollContent.scrollHeight)
+}
 const getArticle = () => {
     console.log('发起了请求')
-    axios.get('http://localhost:3000/contents').then((res) => {
+    axios.get(`http://localhost:3000/contents?_page=${pageNum.value}&_limit=8`).then((res) => {
         console.log('res11', res.data)
-        article.value = res.data
+        // article.value = res.data
+        res.data.map(item => {
+            article.value.push(item)
+        })
         console.log('article.value', article.value)
     })
         .catch(() => {
@@ -409,5 +427,16 @@ onMounted(() => {
 .left-nav-active {
     background: #eaf2ff;
     color: #1E80FF;
+}
+
+.scrollHight {
+    height: 100vh;
+    overflow-y: scroll;
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: #f4f4f4;
+    outline: none;
+    border-radius: 0px;
 }
 </style>
