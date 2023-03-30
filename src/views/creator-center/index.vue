@@ -12,7 +12,8 @@
                         <div class="text-sm text-gray-500">程序员</div>
                     </div>
                 </div>
-                <div @click="toEditor" class="h-9 mt-6 text-sm text-white flex items-center justify-center bg-blue-500">写文章
+                <div @click="toEditor"
+                    class="h-9 mt-6 text-sm text-white flex items-center justify-center bg-blue-500 cursor-pointer">写文章
                 </div>
             </div>
             <!-- 左侧菜单组件 -->
@@ -94,7 +95,7 @@
                 <div>
                     <div class="w-28 h-8 flex ml-5" style="background: #fafafa;padding: 3px;">
                         <div v-for="(item, index) in publishNav" :key="item" class="px-3 py-0.5
-                                                                                        text-sm flex items-center"
+                                                                                            text-sm flex items-center"
                             :class="publishIndex === index ? 'publish-active' : ''">{{ item
                             }}</div>
                     </div>

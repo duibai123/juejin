@@ -319,7 +319,7 @@ const more = () => {
 }
 onMounted(() => {
     getArticle()
-    userInfo.value = getStorage('token') === '' ? '' : getStorage('token')
+    userInfo.value = getStorage('token')
 
 })
 </script>
